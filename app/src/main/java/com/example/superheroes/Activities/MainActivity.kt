@@ -8,10 +8,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.leagueofheroes.R
-import com.example.leagueofheroes.adapters.SuperheroAdapter
-import com.example.leagueofheroes.data.Superhero
-import com.example.leagueofheroes.data.SuperheroService
+import com.example.superheroes.R
+import com.example.superheroes.Adapters.SuperheroAdapter
+import com.example.superheroes.Data.Superhero
+import com.example.superheroes.Data.SuperheroService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
