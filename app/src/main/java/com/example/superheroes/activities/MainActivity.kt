@@ -1,4 +1,4 @@
-package com.example.superheroes.Activities
+package com.example.superheroes.activities
 
 import android.os.Bundle
 import android.util.Log
@@ -8,10 +8,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.leagueofheroes.R
-import com.example.leagueofheroes.adapters.SuperheroAdapter
-import com.example.leagueofheroes.data.Superhero
-import com.example.leagueofheroes.data.SuperheroService
+import com.example.superheroes.R
+import com.example.superheroes.adapters.SuperheroAdapter
+import com.example.superheroes.data.Superhero
+import com.example.superheroes.data.SuperheroService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     fun getRetrofit() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.superheroapi.com/api.php/7252591128153666/")
+            .baseUrl("https://www.superheroapi.com/api.php/8c1e7076aa29f53063ff1dd68bfa8415/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

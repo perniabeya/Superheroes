@@ -1,16 +1,15 @@
-package com.example.superheroes.Adapters
+package com.example.superheroes.adapters
 
 import android.view.LayoutInflater
 
-mport android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.leagueofheroes.R
-import com.example.leagueofheroes.data.Superhero
+import com.example.superheroes.R
+import com.example.superheroes.data.Superhero
 import com.squareup.picasso.Picasso
 
 class SuperheroAdapter(var items: List<Superhero>) : Adapter<SuperheroViewHolder>() {

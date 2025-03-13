@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.superheroes"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.superheroes"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -36,10 +36,9 @@ android {
 }
 
 dependencies {
-
     // Retrofit & GsonConverterFactory
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
     // Picasso
     implementation("com.squareup.picasso:picasso:2.8")
