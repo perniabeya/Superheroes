@@ -1,18 +1,12 @@
 package com.example.superheroes.activities
 
-import android.content.Intent
-import android.widget.Toast
 import android.os.Bundle
-import android.view.Menu
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.superheroes.R
-import com.example.superheroes.adapters.SuperheroAdapter
 import com.example.superheroes.data.Superhero
 import com.example.superheroes.data.SuperheroService
 import kotlinx.coroutines.CoroutineScope
@@ -21,52 +15,47 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
-class MainActivity : AppCompatActivity() {
-
-    lateinit var recyclerView: RecyclerView
-    lateinit var adapter: SuperheroAdapter
-
-    var superheroList: List<Superhero> = listOf()
+class DetailActivity :AppCompatActivity() {
+    lateinit var superhero: Superhero
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        setContentView(R.layout.activity_main)
-
+        setContentView(R.layout.activity_detail)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        recyclerView = findViewById(R.id.recyclerView)
-
-        adapter = SuperheroAdapter(superheroList)
-
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
-
-        getRetrofit()
+        val id = intent.getStringExtra("SUPERHERO_ID")!!
+        getSuperheroById(id)
     }
 
-    fun getRetrofit() {
+    fun loadData() {
+        Toast.makeText(this, superhero.name, Toast.LENGTH_LONG).show()
+        // Tenemos que rellenar la información del superheroe en pantalla
+    }
+
+    fun getRetrofit(): SuperheroService {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.superheroapi.com/api.php/8c1e7076aa29f53063ff1dd68bfa8415/")
+            .baseUrl("https://www.superheroapi.com/api.php/7252591128153666/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val service = retrofit.create(SuperheroService::class.java)
+        return retrofit.create(SuperheroService::class.java)
+    }
 
+    fun getSuperheroById(id: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val result = service.findSuperheroesByName("super")
+            try {
+                val service = getRetrofit()
+                superhero = service.findSuperheroById(id)
 
-            superheroList = result.results
-
-            CoroutineScope(Dispatchers.Main).launch {
-                adapter.items = superheroList
-                adapter.notifyDataSetChanged()
+                CoroutineScope(Dispatchers.Main).launch {
+                    loadData()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
