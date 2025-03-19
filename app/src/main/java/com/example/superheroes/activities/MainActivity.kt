@@ -7,6 +7,7 @@ import android.view.Menu
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,6 +16,7 @@ import com.example.superheroes.R
 import com.example.superheroes.adapters.SuperheroAdapter
 import com.example.superheroes.data.Superhero
 import com.example.superheroes.data.SuperheroService
+import com.example.superheroes.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,8 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var recyclerView: RecyclerView
     lateinit var adapter: SuperheroAdapter
+    lateinit var binding: ActivityMainBinding
 
     var superheroList: List<Superhero> = listOf()
 
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -41,32 +44,63 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        recyclerView = findViewById(R.id.recyclerView)
+        adapter = SuperheroAdapter(superheroList) { position ->
+            val superhero = superheroList[position]
 
-        adapter = SuperheroAdapter(superheroList)
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("SUPERHERO_ID", superhero.id)
+            startActivity(intent)
+        }
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        getRetrofit()
+        searchSuperheroesByName("a")
     }
 
-    fun getRetrofit() {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_activity_main, menu)
+
+        val menuItem = menu?.findItem(R.id.action_search)
+        val searchView = menuItem?.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchSuperheroesByName(query)
+                return false
+            }
+
+            override fun onQueryTextChange(query: String): Boolean {
+                return false
+            }
+        })
+
+        return true
+    }
+
+    fun getRetrofit(): SuperheroService {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.superheroapi.com/api.php/8c1e7076aa29f53063ff1dd68bfa8415/")
+            .baseUrl("https://www.superheroapi.com/api.php/7252591128153666/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val service = retrofit.create(SuperheroService::class.java)
+        return retrofit.create(SuperheroService::class.java)
+    }
 
+    fun searchSuperheroesByName(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val result = service.findSuperheroesByName("super")
+            try {
+                val service = getRetrofit()
+                val result = service.findSuperheroesByName(query)
 
-            superheroList = result.results
+                superheroList = result.results
 
-            CoroutineScope(Dispatchers.Main).launch {
-                adapter.items = superheroList
-                adapter.notifyDataSetChanged()
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapter.items = superheroList
+                    adapter.notifyDataSetChanged()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

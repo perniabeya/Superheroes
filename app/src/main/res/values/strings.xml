@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Super Heroes</string>
+    <string name="app_name">League Of Heroes</string>
     <string name="action_search">Search</string>
+    <string name="action_biography">Biography</string>
+    <string name="action_appearance">Appearance</string>
+    <string name="action_stats">Stats</string>
 </resources>
